@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#123b3a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="نبض الضغط">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/icons/icon-192.png">
+<title>نبض الضغط | متابعة ضغط الدم</title>
+<style>
+:root {
+  --site-primary: #176b63;
+  --site-on-primary: #ffffff;
+  --site-secondary: #dceee9;
+  --site-on-secondary: #153d39;
+  --site-background: #f2f7f5;
+  --site-on-background: #172c2a;
+  --site-font-body: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --site-font-heading: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --site-heading-scale: 1;
+  --site-spacing-scale: 1;
+  --site-radius-scale: 1;
+  --site-decoration-opacity: 1;
+  --surface: #ffffff;
+  --surface-2: #edf4f1;
+  --text: #172c2a;
+  --muted: #526762;
+  --line: #cbdad4;
+  --good: #23845d;
+  --warn: #b87519;
+  --bad: #bd4949;
+  color-scheme: light;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--site-background);color:var(--site-on-background);font-family:var(--site-font-body)}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+#app{min-height:100vh;width:100%;background-color:var(--site-background);color:var(--site-on-background);border-radius:0;padding:calc(20px * var(--site-spacing-scale)) max(16px,env(safe-area-inset-right)) calc(36px * var(--site-spacing-scale)) max(16px,env(safe-area-inset-left));}
+.shell{max-width:980px;margin:auto}
+header{display:flex;justify-content:space-between;align-items:center;gap:14px;margin-bottom:22px}
+.brand{display:flex;align-items:center;gap:12px}
+.logo{width:46px;height:46px;border-radius:16px;background:var(--site-primary);color:var(--site-on-primary);display:grid;place-items:center;font-size:24px;box-shadow:0 8px 22px #176b6325}
+h1{font:700 calc(23px * var(--site-heading-scale))/1.2 var(--site-font-heading);margin:0}
+.sub{color:var(--muted);font-size:13px;margin-top:4px}
+.pill{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:8px 12px;color:var(--muted);font-size:12px;white-space:nowrap}
+.hero{background:var(--site-primary);color:var(--site-on-primary);border-radius:calc(24px * var(--site-radius-scale));padding:22px;margin-bottom:16px;position:relative;overflow:hidden}
+.hero:after{content:"";position:absolute;width:190px;height:190px;border:1px solid #ffffff30;border-radius:50%;left:-70px;top:-100px;opacity:var(--site-decoration-opacity)}
+.hero-top{display:flex;justify-content:space-between;align-items:center;gap:10px;position:relative;z-index:1}
+.hero-label{font-size:13px;opacity:.82}
+.hero-reading{font-size:clamp(34px,8vw,48px);font-weight:750;letter-spacing:-1px;margin:8px 0 4px;direction:ltr;text-align:right;font-variant-numeric:tabular-nums}
+.hero-foot{font-size:12px;opacity:.82}
+.hero-chip{background:#ffffff20;border:1px solid #ffffff40;padding:7px 10px;border-radius:999px;font-size:12px}
+.grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:14px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:calc(20px * var(--site-radius-scale));padding:18px;min-width:0;box-shadow:0 4px 18px #183b3210}
+.span-8{grid-column:span 8}.span-4{grid-column:span 4}.span-12{grid-column:span 12}
+h2{font-size:17px;margin:0 0 14px;font-weight:700}
+.muted{color:var(--muted)}.small{font-size:12px}
+.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.field{display:flex;flex-direction:column;gap:6px}.field label{font-size:12px;color:var(--muted);font-weight:650}
+input,select,textarea{width:100%;border:1px solid var(--line);background:var(--surface);color:var(--text);border-radius:12px;padding:12px;min-height:44px;outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--site-primary);box-shadow:0 0 0 3px #176b631c}
+input[type=checkbox]{width:18px;min-height:18px;accent-color:var(--site-primary)}
+.symptoms{display:flex;flex-wrap:wrap;gap:8px;margin-top:7px}
+.symptom{display:flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:999px;padding:7px 10px;font-size:12px;color:var(--text)}
+.actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:14px}
+.btn{border:0;border-radius:12px;padding:11px 15px;font-weight:700;font-size:13px;background:var(--site-primary);color:var(--site-on-primary)}
+.btn.secondary{background:var(--site-secondary);color:var(--site-on-secondary)}
+.btn.ghost{background:transparent;color:var(--site-primary);border:1px solid var(--line)}
+.btn.danger{background:#fae8e7;color:#8f2929}
+.stat-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.stat{background:var(--surface-2);padding:13px;border-radius:14px}.stat .value{font-size:23px;font-weight:750;color:var(--text);direction:ltr;text-align:right;font-variant-numeric:tabular-nums}.stat .label{font-size:12px;color:var(--muted);font-weight:650;margin-top:3px}
+.chart-wrap{height:220px;position:relative}.chart-wrap svg{width:100%;height:100%;overflow:visible}.legend{display:flex;gap:16px;font-size:11px;color:var(--muted);margin-top:8px}.dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-left:5px}
+.table-wrap{overflow:auto}table{width:100%;border-collapse:collapse;white-space:nowrap;font-size:13px;color:var(--text)}th,td{padding:11px 8px;border-bottom:1px solid var(--line);text-align:right}th{color:#344d47;background:#edf4f1;font-weight:750}td{color:var(--text)}td.num{direction:ltr;text-align:right;font-variant-numeric:tabular-nums}.tag{display:inline-block;border-radius:999px;padding:4px 8px;background:var(--surface-2);font-size:11px}.tag.good{color:#176b49}.tag.warn{color:#87500b}.tag.bad{color:#a52e2e}
+.notice{border-radius:14px;background:var(--surface-2);padding:12px 14px;font-size:12px;line-height:1.7;color:var(--muted);margin-top:14px}.notice strong{color:var(--text)}
+.empty{text-align:center;padding:24px;color:var(--muted);font-size:13px}
+.footer{margin-top:18px;text-align:center;color:var(--muted);font-size:11px;line-height:1.7}
+.file-hidden{display:none!important}
+.toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.medicine-list{display:grid;gap:9px;margin-top:12px}
+.medicine-item{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:11px;border:1px solid var(--line);border-radius:13px;background:var(--surface-2)}
+.medicine-item strong{display:block}.medicine-item small{color:var(--muted)}
+.reminder-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:9px}
+.reminder-card{border:1px solid var(--line);border-radius:14px;padding:12px;margin-top:10px}
+.btn.tiny{padding:7px 10px;font-size:11px}
+@media(max-width:720px){.span-8,.span-4{grid-column:span 12}.hero{padding:18px}.card{padding:15px}.grid{gap:11px}header{align-items:flex-start}.pill{font-size:10px}.form-grid{gap:10px}}
+@media(max-width:390px){.form-grid{grid-template-columns:1fr}.hero-top{align-items:flex-start;flex-direction:column}.hero-reading{margin-top:5px}}
+@media print{body{background:white!important}#app{padding:0;background:white!important;color:#172c2a!important}.no-print,header .pill,.actions,.hero:after{display:none!important}.card,.hero{box-shadow:none;break-inside:avoid}.hero{background:#eaf2ef!important;color:#172c2a!important;border:1px solid #ccd9d3}.hero-chip{border-color:#9aada5}.grid{display:block}.card{margin-bottom:12px}input,select{border:0;padding:0}.footer{color:#555}}
+</style>
+</head>
+<body>
+<div id="app"><div class="shell">
+<header>
+  <div class="brand"><div class="logo">♥</div><div><h1>نبض الضغط</h1><div class="sub">متابعة يومية لضغط الدم</div></div></div>
+  <div class="toolbar no-print"><button class="btn ghost" id="langBtn" type="button">English</button><div class="pill">🔒 بياناتك محفوظة على هذا الجهاز</div></div>
+</header>
+<section class="hero">
+  <div class="hero-top"><div><div class="hero-label">آخر قراءة مسجلة</div><div class="hero-reading" id="latestBP">— / —</div><div class="hero-foot" id="latestMeta">ابدأ بتسجيل أول قراءة</div></div><div class="hero-chip" id="latestStatus">بانتظار القراءة</div></div>
+</section>
+<div class="grid">
+  <section class="card span-8">
+    <h2>＋ تسجيل قراءة جديدة</h2>
+    <form id="entryForm">
+      <div class="form-grid">
+        <div class="field"><label for="sys">الضغط الانقباضي (الرقم العلوي)</label><input id="sys" type="number" inputmode="numeric" min="50" max="260" placeholder="مثال: 120" required></div>
+        <div class="field"><label for="dia">الضغط الانبساطي (الرقم السفلي)</label><input id="dia" type="number" inputmode="numeric" min="30" max="160" placeholder="مثال: 80" required></div>
+        <div class="field"><label for="pulse">النبض (اختياري)</label><input id="pulse" type="number" inputmode="numeric" min="25" max="240" placeholder="مثال: 72"></div>
+        <div class="field"><label for="when">وقت / سياق القياس</label><select id="when"><option value="morning">صباحاً</option><option value="evening">مساءً</option><option value="before-meal">قبل الوجبة</option><option value="after-meal">بعد الوجبة</option><option value="before-medicine">قبل الدواء</option><option value="after-medicine">بعد الدواء</option><option value="other">وقت آخر</option></select></div>
+        <div class="field"><label for="date">التاريخ</label><input id="date" type="date" required></div>
+        <div class="field"><label for="time">الساعة</label><input id="time" type="time" required></div>
+      </div>
+      <div style="margin-top:14px"><label class="small muted">الأعراض وقت القياس (اختياري)</label><div class="symptoms">
+        <label class="symptom"><input type="checkbox" value="صداع"> صداع</label>
+        <label class="symptom"><input type="checkbox" value="زغللة"> زغللة</label>
+        <label class="symptom"><input type="checkbox" value="دوخة"> دوخة</label>
+        <label class="symptom"><input type="checkbox" value="خفقان"> خفقان</label>
+        <label class="symptom"><input type="checkbox" value="غصة/ضغط بالحلق"> غصة/ضغط بالحلق</label>
+      </div></div>
+      <div class="field" style="margin-top:12px"><label for="notes">ملاحظات إضافية (اختياري)</label><input id="notes" type="text" maxlength="180" placeholder="مثلاً: بعد الراحة، شعور عام..."></div>
+      <div class="actions"><button class="btn" type="submit">حفظ القراءة</button><button class="btn secondary" type="button" id="resetForm">مسح الحقول</button></div>
+    </form>
+    <div class="notice"><strong>لأفضل دقة:</strong> اجلس بهدوء 5 دقائق، والظهر مسنود والقدمان على الأرض والذراع بمستوى القلب. خذ قراءتين بفاصل دقيقة وسجّل متوسطهما. تجنب القهوة والتدخين والرياضة خلال 30 دقيقة قبل القياس.</div>
+  </section>
+  <section class="card span-4">
+    <h2>ملخص آخر 7 أيام</h2>
+    <div class="stat-grid">
+      <div class="stat"><div class="value" id="avgSys">—</div><div class="label">متوسط الانقباضي</div></div>
+      <div class="stat"><div class="value" id="avgDia">—</div><div class="label">متوسط الانبساطي</div></div>
+      <div class="stat"><div class="value" id="count7">0</div><div class="label">عدد القراءات</div></div>
+      <div class="stat"><div class="value" id="avgPulse">—</div><div class="label">متوسط النبض</div></div>
+    </div>
+    <div class="notice" id="summaryNote">سجّل قراءاتك لتظهر المتوسطات هنا. هذه إحصاءات متابعة وليست تشخيصاً طبياً.</div>
+  </section>
+  <section class="card span-12">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><h2 style="margin:0">منحنى ضغط الدم</h2><select id="range" style="width:auto;min-width:130px"><option value="7">آخر 7 أيام</option><option value="14">آخر 14 يوماً</option><option value="30">آخر 30 يوماً</option><option value="all">كل القراءات</option></select></div>
+    <div class="chart-wrap" id="chart"><div class="empty">لا توجد قراءات كافية لعرض الرسم البياني</div></div>
+    <div class="legend"><span><i class="dot" style="background:#176b63"></i>الانقباضي</span><span><i class="dot" style="background:#d49a42"></i>الانبساطي</span></div>
+  </section>
+  <section class="card span-12">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px"><h2 style="margin:0">سجل القراءات</h2><span class="muted small" id="totalCount">0 قراءة</span></div>
+    <div class="table-wrap" id="history"><div class="empty">لم تسجل أي قراءة بعد.</div></div>
+  </section>
+  <section class="card span-12 no-print">
+    <h2>💊 الأدوية والتذكيرات</h2>
+    <p class="muted small">أضف أكثر من دواء وحدد وقت التذكير اليومي لكل دواء. يمكنك تأكيد تناول الجرعة أو تأجيل التنبيه (غفوة).</p>
+    <form id="medicineForm">
+      <div class="form-grid">
+        <div class="field"><label for="medName">اسم الدواء</label><input id="medName" maxlength="80" placeholder="مثال: أملور" required></div>
+        <div class="field"><label for="medDose">الجرعة / التعليمات</label><input id="medDose" maxlength="80" placeholder="مثال: 5 mg" ></div>
+        <div class="field"><label for="medTime">وقت التذكير</label><input id="medTime" type="time" required></div>
+        <div class="field"><label for="medNote">ملاحظة (اختياري)</label><input id="medNote" maxlength="100" placeholder="مثال: بعد الإفطار"></div>
+      </div>
+      <div class="actions"><button class="btn" type="submit">＋ إضافة دواء وتذكير</button><button class="btn secondary" type="button" id="notifyBtn">تفعيل إشعارات الجهاز</button></div>
+    </form>
+    <div id="medicineList" class="medicine-list"><div class="empty">لم تتم إضافة أدوية بعد.</div></div>
+    <div class="notice"><strong>الغفوة:</strong> عند ظهور التذكير يمكنك تأجيله 5 أو 10 أو 15 أو 30 أو 60 دقيقة، أو تأكيد تناول الجرعة. التذكيرات والإشعارات تعمل عندما يكون التطبيق مفتوحاً؛ لا يضمن هذا النموذج تنبيهاً إذا أُغلق المتصفح أو أوقف النظام عمله في الخلفية. لا تغيّر مواعيد أو جرعات الدواء إلا وفق وصف الطبيب.</div>
+  </section>
+  <section class="card span-12 no-print">
+    <h2>النسخ الاحتياطي والتقرير</h2>
+    <p class="muted small" style="line-height:1.7">تُحفظ البيانات محلياً في متصفح هذا الجهاز. لتنتقل بين الآيفون والأندرويد، صدّر ملف النسخة الاحتياطية من الجهاز الأول ثم استورده على الجهاز الآخر. احتفظ بنسخة دورية في مكان آمن.</p>
+    <div class="actions">
+      <button class="btn" id="exportBtn">↓ تصدير نسخة احتياطية</button>
+      <button class="btn secondary" id="importBtn">↑ استعادة نسخة احتياطية</button>
+      <button class="btn ghost" id="reportBtn">طباعة / حفظ تقرير PDF</button>
+      <input class="file-hidden" type="file" id="importFile" accept="application/json,.json">
+    </div>
+    <div class="notice"><strong>ملاحظة الخصوصية:</strong> لا يتم إرسال قراءاتك إلى خادم من خلال هذه النسخة. النسخ الاحتياطي يتم يدوياً بملف JSON. مزامنة تلقائية سحابية بين الأجهزة تحتاج إلى خدمة آمنة وحساب، وهي غير مفعّلة في هذا النموذج.</div>
+  </section>
+</div>
+<div class="footer">أداة مساعدة للتسجيل والتنظيم فقط، ولا تشخّص المرض ولا تقترح تعديل الدواء.<br>اتبع تعليمات طبيبك، ولا تؤخر طلب الرعاية العاجلة عند ظهور أعراض خطيرة.</div>
+</div></div>
+<script>
+(function(){
+  const KEY='nabdh-pressure-records-v1', MEDKEY='nabdh-pressure-medicines-v1', LOGKEY='nabdh-pressure-medlog-v1';
+  let records=[];
+  let medicines=[], medLog=[], lang=localStorage.getItem('nabdh-pressure-language')||'ar', reminderTimer=null, activeReminder=null;
+  const $=id=>document.getElementById(id);
+  const pad=n=>String(n).padStart(2,'0');
+  const now=new Date();
+  $('date').value=`${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}`;
+  $('time').value=`${pad(now.getHours())}:${pad(now.getMinutes())}`;
+  function load(){try{const v=JSON.parse(localStorage.getItem(KEY)||'[]');records=Array.isArray(v)?v.filter(valid):[];medicines=JSON.parse(localStorage.getItem(MEDKEY)||'[]');medLog=JSON.parse(localStorage.getItem(LOGKEY)||'[]');if(!Array.isArray(medicines))medicines=[];if(!Array.isArray(medLog))medLog=[]}catch(e){records=[];medicines=[];medLog=[]}}
+  function valid(r){return r&&Number.isFinite(Number(r.sys))&&Number.isFinite(Number(r.dia))&&typeof r.date==='string'&&typeof r.time==='string'}
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(records));return true}catch(e){alert('تعذر الحفظ في مساحة المتصفح. صدّر نسخة احتياطية لتجنب فقد البيانات.');return false}}
+  function dateTime(r){return new Date(r.date+'T'+r.time)}
+  function sorted(){return [...records].sort((a,b)=>dateTime(b)-dateTime(a))}
+  function status(s,d){if(s>=180||d>=120)return ['مرتفع جداً','bad'];if(s>=140||d>=90)return ['مرتفع','bad'];if(s>=130||d>=80)return ['أعلى من المثالي','warn'];if(s<90||d<60)return ['منخفض','warn'];return ['ضمن النطاق المعتاد غالباً','good']}
+  function fmt(n){return Math.round(n*10)/10}
+  function render(){
+    const list=sorted(),last=list[0];
+    $('latestBP').textContent=last?`${last.sys} / ${last.dia}`:'— / —';
+    $('latestMeta').textContent=last?`${last.date} • ${last.time} • ${last.when}`:'ابدأ بتسجيل أول قراءة';
+    const st=last?status(+last.sys,+last.dia):['بانتظار القراءة',''];$('latestStatus').textContent=st[0];
+    const cutoff=new Date();cutoff.setDate(cutoff.getDate()-6);cutoff.setHours(0,0,0,0);
+    const week=list.filter(r=>dateTime(r)>=cutoff);
+    const mean=k=>week.length?fmt(week.reduce((a,r)=>a+Number(r[k]),0)/week.length):'—';
+    $('avgSys').textContent=mean('sys');$('avgDia').textContent=mean('dia');$('count7').textContent=week.length;
+    const pulses=week.filter(r=>r.pulse!==''&&r.pulse!=null);$('avgPulse').textContent=pulses.length?fmt(pulses.reduce((a,r)=>a+Number(r.pulse),0)/pulses.length):'—';
+    $('summaryNote').textContent=week.length?`المتوسط محسوب من ${week.length} قراءة خلال آخر 7 أيام. اعرض السجل على طبيبك، ودوّن الأعراض مع كل قراءة.`:'سجّل قراءاتك لتظهر المتوسطات هنا. هذه إحصاءات متابعة وليست تشخيصاً طبياً.';
+    $('totalCount').textContent=`${list.length} قراءة`;
+    renderHistory(list);renderChart();renderMedicines();applyLanguage();
+  }
+  const whenNames={morning:['صباحاً','Morning'],evening:['مساءً','Evening'],'before-meal':['قبل الوجبة','Before meal'],'after-meal':['بعد الوجبة','After meal'],'before-medicine':['قبل الدواء','Before medicine'],'after-medicine':['بعد الدواء','After medicine'],other:['وقت آخر','Other']};
+  function applyLanguage(){document.documentElement.lang=lang;document.documentElement.dir=lang==='ar'?'rtl':'ltr';$('langBtn').textContent=lang==='ar'?'English':'العربية';document.title=lang==='ar'?'نبض الضغط | متابعة ضغط الدم':'Blood Pressure Pulse | Tracker';const dict={'نبض الضغط':'Blood Pressure Pulse','متابعة يومية لضغط الدم':'Daily blood pressure tracking','🔒 بياناتك محفوظة على هذا الجهاز':'🔒 Your data is stored on this device','آخر قراءة مسجلة':'Latest reading','ابدأ بتسجيل أول قراءة':'Add your first reading','بانتظار القراءة':'Waiting for a reading','＋ تسجيل قراءة جديدة':'＋ Add a new reading','الضغط الانقباضي (الرقم العلوي)':'Systolic pressure (top number)','الضغط الانبساطي (الرقم السفلي)':'Diastolic pressure (bottom number)','النبض (اختياري)':'Pulse (optional)','وقت / سياق القياس':'Measurement context','التاريخ':'Date','الساعة':'Time','الأعراض وقت القياس (اختياري)':'Symptoms during measurement (optional)','صداع':'Headache','زغللة':'Blurred vision','دوخة':'Dizziness','خفقان':'Palpitations','غصة/ضغط بالحلق':'Throat tightness','ملاحظات إضافية (اختياري)':'Additional notes (optional)','حفظ القراءة':'Save reading','مسح الحقول':'Clear fields','لأفضل دقة:':'For accurate readings:','اجلس بهدوء 5 دقائق، والظهر مسنود والقدمان على الأرض والذراع بمستوى القلب. خذ قراءتين بفاصل دقيقة وسجّل متوسطهما. تجنب القهوة والتدخين والرياضة خلال 30 دقيقة قبل القياس.':'Sit quietly for 5 minutes, with your back supported, feet flat, and arm at heart level. Take two readings one minute apart and record their average. Avoid caffeine, smoking, and exercise for 30 minutes beforehand.','ملخص آخر 7 أيام':'Last 7 days summary','متوسط الانقباضي':'Average systolic','متوسط الانبساطي':'Average diastolic','عدد القراءات':'Number of readings','متوسط النبض':'Average pulse','منحنى ضغط الدم':'Blood pressure trend','آخر 7 أيام':'Last 7 days','آخر 14 يوماً':'Last 14 days','آخر 30 يوماً':'Last 30 days','كل القراءات':'All readings','الانقباضي':'Systolic','الانبساطي':'Diastolic','سجل القراءات':'Reading history','الفترة':'Context','الضغط':'Blood pressure','المؤشر':'Category','الأعراض':'Symptoms','حذف':'Delete','لم تسجل أي قراءة بعد.':'No readings recorded yet.','💊 الأدوية والتذكيرات':'💊 Medicines and reminders','أضف أكثر من دواء وحدد وقت التذكير اليومي لكل دواء. يمكنك تأكيد تناول الجرعة أو تأجيل التنبيه (غفوة).':'Add multiple medicines and set a daily reminder for each. Confirm a dose or snooze the reminder.','اسم الدواء':'Medicine name','الجرعة / التعليمات':'Dose / instructions','وقت التذكير':'Reminder time','ملاحظة (اختياري)':'Note (optional)','＋ إضافة دواء وتذكير':'＋ Add medicine and reminder','تفعيل إشعارات الجهاز':'Enable device notifications','لم تتم إضافة أدوية بعد.':'No medicines added yet.','الغفوة:':'Snooze:','عند ظهور التذكير يمكنك تأجيله 5 أو 10 أو 15 أو 30 أو 60 دقيقة، أو تأكيد تناول الجرعة. التذكيرات والإشعارات تعمل عندما يكون التطبيق مفتوحاً؛ لا يضمن هذا النموذج تنبيهاً إذا أُغلق المتصفح أو أوقف النظام عمله في الخلفية. لا تغيّر مواعيد أو جرعات الدواء إلا وفق وصف الطبيب.':'When a reminder appears, snooze it for 5, 10, 15, 30, or 60 minutes, or confirm the dose. Reminders work while the app is open; alerts are not guaranteed if the browser is closed or suspended in the background. Do not change prescribed doses or schedules.','النسخ الاحتياطي والتقرير':'Backup and report','تُحفظ البيانات محلياً في متصفح هذا الجهاز. لتنتقل بين الآيفون والأندرويد، صدّر ملف النسخة الاحتياطية من الجهاز الأول ثم استورده على الجهاز الآخر. احتفظ بنسخة دورية في مكان آمن.':'Data is stored in this device browser. To move between iPhone and Android, export a backup on one device and import it on the other. Keep regular backups in a safe place.','↓ تصدير نسخة احتياطية':'↓ Export backup','↑ استعادة نسخة احتياطية':'↑ Restore backup','طباعة / حفظ تقرير PDF':'Print / save PDF report','ملاحظة الخصوصية:':'Privacy note:','لا يتم إرسال قراءاتك إلى خادم من خلال هذه النسخة. النسخ الاحتياطي يتم يدوياً بملف JSON. مزامنة تلقائية سحابية بين الأجهزة تحتاج إلى خدمة آمنة وحساب، وهي غير مفعّلة في هذا النموذج.':'This version does not send readings to a server. Backups are exported manually as JSON. Automatic cloud sync requires a secure service and account and is not enabled in this prototype.','أداة مساعدة للتسجيل والتنظيم فقط، ولا تشخّص المرض ولا تقترح تعديل الدواء.':'This app is for recording and organization only. It does not diagnose or recommend medication changes.','اتبع تعليمات طبيبك، ولا تؤخر طلب الرعاية العاجلة عند ظهور أعراض خطيرة.':'Follow your clinician’s instructions and seek urgent care for serious symptoms.','مرتفع جداً':'Very high','مرتفع':'High','أعلى من المثالي':'Above ideal','منخفض':'Low','ضمن النطاق المعتاد غالباً':'Within usual range'};if(lang==='en'){const walker=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);let node;while(node=walker.nextNode()){const key=node.nodeValue.trim();if(dict[key])node.nodeValue=node.nodeValue.replace(key,dict[key])}document.querySelectorAll('input[placeholder]').forEach(el=>{const p=el.getAttribute('placeholder');const map={'مثال: 120':'e.g. 120','مثال: 80':'e.g. 80','مثال: 72':'e.g. 72','مثال: أملور':'e.g. Amlor','مثال: 5 mg':'e.g. 5 mg','مثال: بعد الإفطار':'e.g. After breakfast','مثلاً: بعد الراحة، شعور عام...':'e.g. After resting, general feeling...'};if(map[p])el.placeholder=map[p]})}else{document.querySelectorAll('input[placeholder]').forEach(el=>{const map={'e.g. 120':'مثال: 120','e.g. 80':'مثال: 80','e.g. 72':'مثال: 72','e.g. Amlor':'مثال: أملور','e.g. 5 mg':'مثال: 5 mg','e.g. After breakfast':'مثال: بعد الإفطار','e.g. After resting, general feeling...':'مثلاً: بعد الراحة، شعور عام...'};if(map[el.placeholder])el.placeholder=map[el.placeholder]})}document.querySelectorAll('#when option').forEach(o=>o.textContent=(whenNames[o.value]||whenNames.other)[lang==='ar'?0:1])}
+  $('langBtn').onclick=()=>{lang=lang==='ar'?'en':'ar';localStorage.setItem('nabdh-pressure-language',lang);location.reload()};
+  function renderMedicines(){const host=$('medicineList');if(!medicines.length){host.innerHTML=`<div class="empty">${lang==='ar'?'لم تتم إضافة أدوية بعد.':'No medicines added yet.'}</div>`;return}host.innerHTML=medicines.map(m=>`<div class="medicine-item"><div><strong>${esc(m.name)} ${m.dose?'- '+esc(m.dose):''}</strong><small>${esc(m.time)}${m.note?' • '+esc(m.note):''}</small></div><button class="btn danger tiny" data-med-delete="${m.id}">${lang==='ar'?'حذف':'Delete'}</button></div>`).join('')}
+  function persistMeds(){localStorage.setItem(MEDKEY,JSON.stringify(medicines));localStorage.setItem(LOGKEY,JSON.stringify(medLog))}
+  $('medicineForm').addEventListener('submit',e=>{e.preventDefault();medicines.push({id:crypto.randomUUID?crypto.randomUUID():String(Date.now()),name:$('medName').value.trim(),dose:$('medDose').value.trim(),time:$('medTime').value,note:$('medNote').value.trim(),snoozeUntil:0,lastShown:''});persistMeds();$('medicineForm').reset();renderMedicines();scheduleReminders()});
+  $('medicineList').addEventListener('click',e=>{const id=e.target.dataset.medDelete;if(!id)return;if(confirm(lang==='ar'?'حذف هذا الدواء وتذكيره؟':'Delete this medicine and reminder?')){medicines=medicines.filter(m=>m.id!==id);persistMeds();renderMedicines();scheduleReminders()}});
+  $('notifyBtn').onclick=async()=>{if(!('Notification'in window)){alert(lang==='ar'?'الإشعارات غير مدعومة في هذا المتصفح.':'Notifications are not supported in this browser.');return}const p=await Notification.requestPermission();alert(p==='granted'?(lang==='ar'?'تم تفعيل الإشعارات.':'Notifications enabled.'):(lang==='ar'?'لم يتم السماح بالإشعارات.':'Notification permission was not granted.'))};
+  function reminderText(m){return `${lang==='ar'?'موعد الدواء':'Medicine reminder'}: ${m.name}${m.dose?' - '+m.dose:''}${m.note?' ('+m.note+')':''}`}
+  function showReminder(m){activeReminder=m;const snooze=prompt((lang==='ar'?'حان موعد: ':'Time for: ')+m.name+'\n'+(lang==='ar'?'اكتب 5 أو 10 أو 15 أو 30 أو 60 لتأجيله بالدقائق، أو اكتب 0 لتأكيد التناول.':'Enter 5, 10, 15, 30 or 60 to snooze in minutes, or 0 to mark as taken.'));if(snooze===null)return;const n=Number(snooze);if(n===0){medLog.push({id:m.id,name:m.name,dose:m.dose,at:new Date().toISOString(),status:'taken'});m.lastShown=new Date().toLocaleDateString('en-CA');persistMeds()}else if([5,10,15,30,60].includes(n)){m.snoozeUntil=Date.now()+n*60000;persistMeds()}else alert(lang==='ar'?'اختر 0 أو 5 أو 10 أو 15 أو 30 أو 60.':'Choose 0, 5, 10, 15, 30 or 60.');scheduleReminders()}
+  function scheduleReminders(){if(reminderTimer)clearInterval(reminderTimer);reminderTimer=setInterval(()=>{const now=new Date(),today=now.toLocaleDateString('en-CA');medicines.forEach(m=>{const [h,min]=m.time.split(':').map(Number),due=new Date();due.setHours(h,min,0,0);const snoozed=m.snoozeUntil&&Date.now()>=m.snoozeUntil;const regularDue=now>=due&&m.lastShown!==today;if(snoozed||regularDue){m.lastShown=today;m.snoozeUntil=0;persistMeds();if('Notification'in window&&Notification.permission==='granted')new Notification('نبض الضغط',{body:reminderText(m)});showReminder(m)}})},15000)}
+  function renderHistory(list){
+    if(!list.length){$('history').innerHTML='<div class="empty">لم تسجل أي قراءة بعد.</div>';return}
+    const rows=list.slice(0,100).map(r=>{const [label,cls]=status(+r.sys,+r.dia);const symptoms=(r.symptoms||[]).join('، ')||'—';const when=(whenNames[r.when]||[r.when,r.when])[lang==='ar'?0:1];return `<tr><td>${esc(r.date)}<br><span class="muted">${esc(r.time)}</span></td><td>${esc(when)}</td><td class="num"><strong>${r.sys}/${r.dia}</strong></td><td class="num">${r.pulse||'—'}</td><td><span class="tag ${cls}">${label}</span></td><td>${esc(symptoms)}</td><td><button class="btn ghost" style="padding:6px 9px" data-delete="${r.id}" aria-label="حذف القراءة">${lang==='ar'?'حذف':'Delete'}</button></td></tr>`}).join('');
+    $('history').innerHTML=`<table><thead><tr><th>التاريخ والوقت</th><th>الفترة</th><th>الضغط</th><th>النبض</th><th>المؤشر</th><th>الأعراض</th><th></th></tr></thead><tbody>${rows}</tbody></table>`;
+  }
+  function renderChart(){
+    const days=$('range').value;let data=sorted().reverse();if(days!=='all'){const cut=new Date();cut.setDate(cut.getDate()-(Number(days)-1));cut.setHours(0,0,0,0);data=data.filter(r=>dateTime(r)>=cut)}
+    data=data.slice(-40);if(data.length<2){$('chart').innerHTML='<div class="empty">أضف قراءتين أو أكثر لعرض المنحنى.</div>';return}
+    const W=820,H=210,L=42,R=12,T=15,B=32,min=40,max=200;const x=i=>L+i*(W-L-R)/(data.length-1),y=v=>T+(max-v)*(H-T-B)/(max-min);
+    const grid=[60,90,120,150,180];let svg=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="منحنى قراءات ضغط الدم">`;
+    grid.forEach(v=>{svg+=`<line x1="${L}" y1="${y(v)}" x2="${W-R}" y2="${y(v)}" stroke="var(--line)" stroke-dasharray="3 4"/><text x="${L-8}" y="${y(v)+4}" fill="var(--muted)" font-size="11" text-anchor="end">${v}</text>`});
+    const path=k=>data.map((r,i)=>(i?'L':'M')+x(i)+','+y(+r[k])).join(' ');
+    svg+=`<path d="${path('sys')}" fill="none" stroke="#176b63" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="${path('dia')}" fill="none" stroke="#d49a42" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>`;
+    data.forEach((r,i)=>{svg+=`<circle cx="${x(i)}" cy="${y(+r.sys)}" r="4" fill="#176b63"/><circle cx="${x(i)}" cy="${y(+r.dia)}" r="4" fill="#d49a42"/>`});
+    [0,Math.floor((data.length-1)/2),data.length-1].forEach(i=>{const d=data[i].date.slice(5);svg+=`<text x="${x(i)}" y="${H-8}" fill="var(--muted)" font-size="11" text-anchor="middle">${d}</text>`});svg+='</svg>';$('chart').innerHTML=svg;
+  }
+  function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+  $('entryForm').addEventListener('submit',e=>{e.preventDefault();const sys=+$('sys').value,dia=+$('dia').value,pulse=$('pulse').value?+$('pulse').value:'';if(sys<50||sys>260||dia<30||dia>160||sys<=dia){alert('راجع أرقام الضغط المدخلة. يجب أن يكون الانقباضي أعلى من الانبساطي.');return}if(pulse!==''&&(pulse<25||pulse>240)){alert('راجع قيمة النبض.');return}
+    const symptoms=[...document.querySelectorAll('.symptom input:checked')].map(x=>x.value);records.push({id:(crypto.randomUUID?crypto.randomUUID():String(Date.now())+Math.random()),sys,dia,pulse,when:$('when').value,date:$('date').value,time:$('time').value,symptoms,notes:$('notes').value});save();render();$('entryForm').reset();$('date').value=`${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}`;$('time').value=`${pad(new Date().getHours())}:${pad(new Date().getMinutes())}`;});
+  $('resetForm').onclick=()=>$('entryForm').reset();$('range').onchange=renderChart;
+  $('history').addEventListener('click',e=>{const id=e.target.dataset.delete;if(!id)return;if(confirm('هل تريد حذف هذه القراءة؟')){records=records.filter(r=>r.id!==id);save();render()}});
+  $('exportBtn').onclick=()=>{const payload={app:'نبض الضغط',version:2,exportedAt:new Date().toISOString(),records,medicines,medLog};const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`نسخة-نبض-الضغط-${$('date').value}.json`;a.click();URL.revokeObjectURL(url)};
+  $('importBtn').onclick=()=>$('importFile').click();
+  $('importFile').onchange=async e=>{const file=e.target.files[0];if(!file)return;try{const obj=JSON.parse(await file.text());const incoming=Array.isArray(obj)?obj:obj.records;if(!Array.isArray(incoming)||!incoming.every(valid))throw new Error('invalid');if(!confirm(`سيتم دمج ${incoming.length} قراءة مع السجل الحالي، مع استيراد الأدوية والتذكيرات إن وجدت. هل تريد المتابعة؟`))return;const map=new Map(records.map(r=>[r.id||`${r.date}|${r.time}|${r.sys}|${r.dia}`,r]));incoming.forEach(r=>map.set(r.id||`${r.date}|${r.time}|${r.sys}|${r.dia}`,r));records=[...map.values()];if(Array.isArray(obj.medicines))medicines=obj.medicines;if(Array.isArray(obj.medLog))medLog=obj.medLog;save();persistMeds();render();scheduleReminders();alert('تم استيراد النسخة الاحتياطية بنجاح.')}catch(err){alert('تعذر قراءة الملف. اختر نسخة احتياطية صادرة من التطبيق.')}finally{e.target.value=''}};
+  $('reportBtn').onclick=()=>window.print();
+  load();render();scheduleReminders();
+})();
+</script>
+<script>
+(function(){
+  const translations={
+    'التاريخ والوقت':'Date & time','الفترة':'Context','الضغط':'Blood pressure','النبض':'Pulse','المؤشر':'Status','الأعراض':'Symptoms',
+    'لم تسجل أي قراءة بعد.':'No readings recorded yet.','لا توجد قراءات كافية لعرض الرسم البياني':'Not enough readings to display the chart.','أضف قراءتين أو أكثر لعرض المنحنى.':'Add at least two readings to display the trend.',
+    'صداع':'Headache','زغللة':'Blurred vision','دوخة':'Dizziness','خفقان':'Palpitations','غصة/ضغط بالحلق':'Throat tightness',
+    'راجع أرقام الضغط المدخلة. يجب أن يكون الانقباضي أعلى من الانبساطي.':'Please check the blood pressure values. Systolic must be higher than diastolic.',
+    'راجع قيمة النبض.':'Please check the pulse value.','هل تريد حذف هذه القراءة؟':'Delete this reading?',
+    'تعذر الحفظ في مساحة المتصفح. صدّر نسخة احتياطية لتجنب فقد البيانات.':'Could not save in browser storage. Export a backup to avoid losing data.',
+    'تم استيراد النسخة الاحتياطية بنجاح.':'Backup imported successfully.','تعذر قراءة الملف. اختر نسخة احتياطية صادرة من التطبيق.':'Could not read the file. Choose a backup exported from this app.'
+  };
+  function translateRemainder(){
+    if(localStorage.getItem('nabdh-pressure-language')!=='en')return;
+    const walker=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);let node;
+    while(node=walker.nextNode()){
+      const raw=node.nodeValue,trimmed=raw.trim();
+      if(translations[trimmed])node.nodeValue=raw.replace(trimmed,translations[trimmed]);
+      else if(trimmed.includes('قراءة')&&/\d+ قراءة/.test(trimmed))node.nodeValue=raw.replace(/(\d+) قراءة/,'$1 readings');
+      else if(trimmed.includes('المتوسط محسوب من'))node.nodeValue=raw.replace(/المتوسط محسوب من (\d+) قراءة خلال آخر 7 أيام\. اعرض السجل على طبيبك، ودوّن الأعراض مع كل قراءة\./,'Average based on $1 readings over the last 7 days. Share the log with your clinician and note symptoms with each reading.');
+      else if(trimmed.includes('سجّل قراءاتك لتظهر المتوسطات هنا'))node.nodeValue=raw.replace(trimmed,'Record readings to see your averages here. These are tracking statistics, not a medical diagnosis.');
+      else if(trimmed.includes('أضف قراءتين أو أكثر'))node.nodeValue=raw.replace(trimmed,'Add at least two readings to display the trend.');
+      else if(trimmed.includes('لم تسجل أي قراءة'))node.nodeValue=raw.replace(trimmed,'No readings recorded yet.');
+    }
+    document.querySelectorAll('.symptom').forEach(el=>{const input=el.querySelector('input');if(!input)return;const label=translations[input.value];if(label)el.lastChild.textContent=' '+label});
+    document.querySelectorAll('#history th').forEach(el=>{const t=el.textContent.trim();if(translations[t])el.textContent=translations[t]});
+  }
+  translateRemainder();
+  new MutationObserver(translateRemainder).observe(document.body,{childList:true,subtree:true,characterData:true});
+})();
+</script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js').catch(() => {}));
+}
+</script>
+</body>
+</html>
